@@ -42,4 +42,4 @@ React делает интерфейс интерактивным: пользов
 Поработать над плавностью переходов от макета сайта для одного устройства к макету для другого устройства.
 
 #### Ссылка на GitHub Pages
-https://evgeniyaolta.github.io/mesto/index.html
+https://evgeniyaolta.github.io/mesto-react/
