@@ -35,6 +35,7 @@ class Api {
   }
   
   postNewCard (newCardName, newCardLink) {
+    console.log(newCardLink)
     return fetch(`${this._baseUrl}/cards`, {
       method: 'POST',
       headers: {
@@ -63,9 +64,10 @@ class Api {
     .then(this._returnErrorResponse)
   }
 
-  putLike (cardId) {
+  changeLikeCardStatus (cardId, isLiked) {
+    let methodName = (isLiked === true? 'PUT' : 'DELETE')
     return fetch(`${this._baseUrl}/cards/likes/${cardId}`, {
-      method: 'PUT',
+      method: methodName,
       headers: {
         authorization: this._authorizationNumber
         }
@@ -73,17 +75,9 @@ class Api {
   .then(this._returnErrorResponse)
   }
 
-  deleteLike (cardId) {
-    return fetch(`${this._baseUrl}/cards/likes/${cardId}`, {
-      method: 'DELETE',
-      headers: {
-        authorization: this._authorizationNumber
-        }
-    })
-  .then(this._returnErrorResponse)
-  }
 
   deleteCard (cardId) {
+    console.log(`${this._baseUrl}/cards/${cardId}`)
     return fetch(`${this._baseUrl}/cards/${cardId}`, {
       method: 'DELETE',
       headers: {

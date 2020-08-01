@@ -1,79 +1,49 @@
 import React from 'react';
 import PopupWithForm from './PopupWithForm';
 import ImagePopup from './ImagePopup';
+import EditProfilePopup from './EditProfilePopup'
+import EditAvatarPopup from './EditAvatarPopup'
+import AddPlacePopup from './AddPlacePopup'
 import Card from './Card';
 import api from '../utils/api';
+import { CurrentUserContext } from '../context/CurrentUserContext.js';
 
 function Main(props) {
-  const [userName, setUserName] = React.useState('');
-  const [userDescription, setIUserDescription] = React.useState('');
-  const [userAvatar, setUserAvatar] = React.useState('');
-  const [cards, setCards] = React.useState([]);
-
-  React.useEffect(() => {
-    api.getUserInfo()
-    .then((userInfoData) => {
-      setUserName(userInfoData.name);
-      setIUserDescription(userInfoData.about)
-      setUserAvatar(userInfoData.avatar);
-    })
-    .catch(() => {
-      console.error('Что-то пошло не так.');
-    });
-    api.getInitialCards()
-    .then(cardsInfoData => {
-      Array.from(cardsInfoData)
-      setCards(cardsInfoData);
-    })
-    .catch(() => {
-      console.error('Что-то пошло не так.');
-    });
-  }, []);
+  
+  const currentUser = React.useContext(CurrentUserContext);
+  const name = (currentUser !== null && currentUser.name);
+  const avatar = (currentUser !== null && currentUser.avatar);
+  const description = (currentUser !== null && currentUser.about);
+  
 
   return (
     <main className="content">
     <section className="profile">
       <div className="profile__avatar-box">
-        <div className="profile__avatar" style={{ backgroundImage: `url(${userAvatar})` }}></div>
+        <div className="profile__avatar" style={{ backgroundImage: `url(${avatar})` }}></div>
         <button className="profile__avatar-edit-button" onClick={props.onEditAvatar}></button>
       </div>
       <div className="profile__info">
         <div className="profile__first-line"> 
-          <p className="profile__name">{userName}</p>
+          <p className="profile__name">{name}</p>
           <button className="profile__edit-button" type="button" onClick={props.onEditProfile}></button>
         </div>
-        <p className="profile__description">{userDescription}</p>
+        <p className="profile__description">{description}</p>
       </div>
       <button className="profile__add-button" type="button" onClick={props.onAddPlace}></button>
     </section>
 
     <section className="cards">
-      {cards.map(card =>
-      <Card cardData ={card} onCardClick={props.onCardClick} key = {card._id}/>
+      {Array.from(props.cards).map(card =>
+      <Card cardData ={card} onCardClick={props.onCardClick} key = {card._id} onCardLike={props.onCardLike} onCardDelete={props.onCardDelete}/>
       )}
     </section>
 
-    <PopupWithForm name="profile" title="Редактировать профиль" isOpen={props.isEditProfilePopupOpen} onClose={props.onClose}>  
-      <input id="name-input" type="text" className="popup__input" name="name" placeholder="Имя" pattern="[a-zA-Zа-яА-Я\s\-]+" required minLength="2" maxLength="40" /> 
-      <span id="name-input-error" className="popup__input-error"></span>
-      <input id="description-input" type="text" className="popup__input" name="description" placeholder="Описание" required minLength="2" maxLength="200" /> 
-      <span id="description-input-error" className="popup__input-error"></span>
-      <button type="submit" className="popup__save-button">Сохранить</button> 
-    </PopupWithForm> 
+    <EditProfilePopup isOpen={props.isEditProfilePopupOpen} onClose={props.onClose} onUpdateUser={props.onUpdateUser} />
 
-    <PopupWithForm name="avatar" title="Обновить аватар" isOpen={props.isEditAvatarPopupOpen} onClose={props.onClose}>
-      <input id="avatar-input" type="url" className="popup__input" name="avatar" placeholder="Ссылка на фотографию" required /> 
-      <span id="avatar-input-error" className="popup__input-error"></span>
-      <button type="submit" className="popup__save-button">Сохранить</button> 
-    </PopupWithForm>  
+    <EditAvatarPopup isOpen={props.isEditAvatarPopupOpen} onClose={props.onClose} onUpdateAvatar={props.onUpdateAvatar}/> 
 
-    <PopupWithForm name="newplace" title="Новое место" isOpen={props.isAddPlacePopupOpen} onClose={props.onClose}>
-      <input id="place-input" type="text" className="popup__input" name="name" placeholder="Название" required minLength="1" maxLength="30" /> 
-      <span id="place-input-error" className="popup__input-error"></span>
-      <input id="link-input" type="url" className="popup__input" name="link" placeholder="Ссылка на картинку" required /> 
-      <span id="link-input-error" className="popup__input-error"></span>
-      <button type="submit" className="popup__save-button">Создать</button> 
-    </PopupWithForm> 
+    <AddPlacePopup isOpen={props.isAddPlacePopupOpen} onClose={props.onClose} onAddPlace={props.onAddNewPlace} /> 
     
     <PopupWithForm name="removeCard" title="Вы уверенны?">
       <button type="submit" className="popup__save-button popup__save-button_active popup__save-button_for-remove">Да</button>
