@@ -20,7 +20,7 @@ const getUser = (req, res) => {
       .send({ message: `An error has occurred ${error}` }));
 };
 
-const getAllUsers = (res) => {
+const getAllUsers = (req, res) => {
   readFile(users)
     .then((data) => res
       .status(200)
