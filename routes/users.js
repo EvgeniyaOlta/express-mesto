@@ -6,5 +6,4 @@ usersRouter.get('/:id', getUser);
 usersRouter.get('/', getAllUsers);
 
 
-module.exports = usersRouter;
-
+module.exports = usersRouter
