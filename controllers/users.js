@@ -1,5 +1,6 @@
 const path = require('path');
 const { readFile } = require('../helpers');
+
 const users = path.join(__dirname, '..', 'data', 'users.json');
 
 const getUser = (req, res) => {
@@ -32,5 +33,5 @@ const getAllUsers = (req, res) => {
 
 module.exports = {
   getUser,
-  getAllUsers
+  getAllUsers,
 };

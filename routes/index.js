@@ -3,5 +3,5 @@ const cardsRouter = require('./cards');
 
 module.exports = {
   usersRouter,
-  cardsRouter
+  cardsRouter,
 };
