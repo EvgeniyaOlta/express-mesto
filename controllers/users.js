@@ -1,37 +1,60 @@
-const path = require('path');
-const { readFile } = require('../helpers');
+const User = require('../models/user');
+const RequestError = require('../errors/RequestError');
+const SearchError = require('../errors/SearchError');
 
-const users = path.join(__dirname, '..', 'data', 'users.json');
+module.exports.getAllUsers = (req, res, next) => {
+  User.find({})
+    .then((users) => res.send({ data: users }))
+    .catch(next);
+};
 
-const getUser = (req, res) => {
-  readFile(users)
-    .then((data) => {
-      const currentUser = JSON.parse((data)).find((user) => user._id === req.params.id);
-      if (!currentUser) {
-        res
-          .status(404)
-          .send({ message: 'Нет пользователя с таким ID' });
-      }
-      res
-        .status(200)
-        .send(currentUser);
+module.exports.getUser = (req, res, next) => {
+  User.findById(req.params._id)
+    .orFail()
+    .catch((err) => {
+      throw new SearchError({ message: `${err.message}` });
     })
-    .catch((error) => res
-      .status(500)
-      .send({ message: `An error has occurred ${error}` }));
+    .then((user) => res.send({ data: user }))
+    .catch(next);
 };
 
-const getAllUsers = (req, res) => {
-  readFile(users)
-    .then((data) => res
-      .status(200)
-      .send(JSON.parse(data)))
-    .catch((error) => res
-      .status(500)
-      .send({ message: `An error has occurred ${error}` }));
+module.exports.createUser = (req, res, next) => {
+  const { name, about, avatar } = req.body;
+
+  User.create({ name, about, avatar })
+    .catch((err) => {
+      throw new RequestError({ message: `${err.message}` });
+    })
+    .then((user) => res.send({ data: user }))
+    .catch(next);
 };
 
-module.exports = {
-  getUser,
-  getAllUsers,
+module.exports.updateUser = (req, res, next) => {
+  const { name, about } = req.body;
+
+  User.findByIdAndUpdate(req.user._id, { name, about })
+    .orFail((err) => new SearchError({ message: `${err.message}` }))
+    .catch((err) => {
+      if (err instanceof SearchError) {
+        throw err;
+      }
+      throw new RequestError({ message: `${err.message}` });
+    })
+    .then((updatedUser) => res.send({ data: updatedUser }))
+    .catch(next);
+};
+
+module.exports.updateAvatar = (req, res, next) => {
+  const { avatar } = req.body;
+
+  User.findByIdAndUpdate(req.user._id, { avatar })
+    .orFail((err) => new SearchError({ message: `${err.message}` }))
+    .catch((err) => {
+      if (err instanceof SearchError) {
+        throw err;
+      }
+      throw new RequestError({ message: `${err.message}` });
+    })
+    .then((updatedAvatar) => res.send({ data: updatedAvatar }))
+    .catch(next);
 };
