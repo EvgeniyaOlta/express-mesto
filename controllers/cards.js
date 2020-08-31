@@ -1,13 +1,15 @@
 const Card = require('../models/card');
-const RequestError = require('../errors/RequestError');
-const SearchError = require('../errors/SearchError');
 
 module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
 
   Card.create({ name, link, owner: req.user._id })
     .catch((err) => {
-      throw new RequestError({ message: `${err.message}` });
+      if (err.message) {
+        res.status(400).send({ message: err.message });
+        return;
+      }
+      res.status(500).send({ message: 'На сервере произошла ошибка' });
     })
     .then((card) => res.send({ data: card }))
     .catch(next);
@@ -24,7 +26,11 @@ module.exports.deleteCard = (req, res, next) => {
   Card.findByIdAndDelete(req.params._id)
     .orFail()
     .catch((err) => {
-      throw new SearchError({ message: `${err.message}` });
+      if (err.message) {
+        res.status(404).send({ message: err.message });
+        return;
+      }
+      res.status(500).send({ message: 'На сервере произошла ошибка' });
     })
     .then((card) => res.send({ data: card }))
     .catch(next);
@@ -36,7 +42,11 @@ module.exports.likeCard = (req, res, next) => {
     { new: true })
     .orFail()
     .catch((err) => {
-      throw new SearchError({ message: `${err.message}` });
+      if (err.message) {
+        res.status(404).send({ message: err.message });
+        return;
+      }
+      res.status(500).send({ message: 'На сервере произошла ошибка' });
     })
     .then((likes) => res.send({ data: likes }))
     .catch(next);
@@ -48,7 +58,11 @@ module.exports.dislikeCard = (req, res, next) => {
     { new: true })
     .orFail()
     .catch((err) => {
-      throw new SearchError({ message: `${err.message}` });
+      if (err.message) {
+        res.status(404).send({ message: err.message });
+        return;
+      }
+      res.status(500).send({ message: 'На сервере произошла ошибка' });
     })
     .then((likes) => res.send({ data: likes }))
     .catch(next);

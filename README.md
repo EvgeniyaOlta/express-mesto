@@ -11,8 +11,7 @@ MongoDB
 ## Директории
 
 `/routes` — файлы роутера  
-`/controllers` — контроллеры  
-`/errors` — компоненты ошибок  
+`/controllers` — контроллеры   
 `/models` — схемы card и user  
 
 
