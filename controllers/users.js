@@ -1,41 +1,39 @@
 const User = require('../models/user');
 
-module.exports.getAllUsers = (req, res, next) => {
+module.exports.getAllUsers = (req, res) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch(next);
+    .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
 };
 
-module.exports.getUser = (req, res, next) => {
+module.exports.getUser = (req, res) => {
   User.findById(req.params._id)
     .orFail()
+    .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.message) {
+      if (err.name === 'DocumentNotFoundError') {
         res.status(404).send({ message: err.message });
         return;
       }
       res.status(500).send({ message: 'На сервере произошла ошибка' });
-    })
-    .then((user) => res.send({ data: user }))
-    .catch(next);
+    });
 };
 
-module.exports.createUser = (req, res, next) => {
+module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
   User.create({ name, about, avatar })
+    .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.message) {
+      if (err.name === 'ValidationError') {
         res.status(400).send({ message: err.message });
         return;
       }
       res.status(500).send({ message: 'На сервере произошла ошибка' });
-    })
-    .then((user) => res.send({ data: user }))
-    .catch(next);
+    });
 };
 
-module.exports.updateUser = (req, res, next) => {
+module.exports.updateUser = (req, res) => {
   const { name, about } = req.body;
 
   User.findByIdAndUpdate(req.user._id,
@@ -44,19 +42,22 @@ module.exports.updateUser = (req, res, next) => {
       new: true,
       runValidators: true,
     })
-    .orFail((err) => res.status(400).send({ message: err.message }))
+    .orFail()
+    .then((updatedUser) => res.send({ data: updatedUser }))
     .catch((err) => {
-      if (err.message) {
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: err.message });
+        return;
+      }
+      if (err.name === 'DocumentNotFoundError') {
         res.status(404).send({ message: err.message });
         return;
       }
       res.status(500).send({ message: 'На сервере произошла ошибка' });
-    })
-    .then((updatedUser) => res.send({ data: updatedUser }))
-    .catch(next);
+    });
 };
 
-module.exports.updateAvatar = (req, res, next) => {
+module.exports.updateAvatar = (req, res) => {
   const { avatar } = req.body;
 
   User.findByIdAndUpdate(req.user._id,
@@ -65,14 +66,17 @@ module.exports.updateAvatar = (req, res, next) => {
       new: true,
       runValidators: true,
     })
-    .orFail((err) => res.status(400).send({ message: err.message }))
+    .orFail()
+    .then((updatedAvatar) => res.send({ data: updatedAvatar }))
     .catch((err) => {
-      if (err.message) {
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: err.message });
+        return;
+      }
+      if (err.name === 'DocumentNotFoundError') {
         res.status(404).send({ message: err.message });
         return;
       }
       res.status(500).send({ message: 'На сервере произошла ошибка' });
-    })
-    .then((updatedAvatar) => res.send({ data: updatedAvatar }))
-    .catch(next);
+    });
 };
