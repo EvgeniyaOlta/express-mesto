@@ -7,7 +7,7 @@ module.exports.createCard = (req, res) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: err.message });
+        res.status(400).send({ message: `Запрос некорректен: ${err.message}` });
         return;
       }
       res.status(500).send({ message: 'На сервере произошла ошибка' });
@@ -27,7 +27,7 @@ module.exports.deleteCard = (req, res) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'DocumentNotFoundError') {
-        res.status(404).send({ message: err.message });
+        res.status(404).send({ message: `Kарточка с идентификатором ${req.params.id} не найдена` });
         return;
       }
       res.status(500).send({ message: 'На сервере произошла ошибка' });
@@ -42,7 +42,7 @@ module.exports.likeCard = (req, res) => {
     .then((likes) => res.send({ data: likes }))
     .catch((err) => {
       if (err.name === 'DocumentNotFoundError') {
-        res.status(404).send({ message: err.message });
+        res.status(404).send({ message: `Kарточка с идентификатором ${req.params.id} не найдена` });
         return;
       }
       res.status(500).send({ message: 'На сервере произошла ошибка' });
@@ -57,7 +57,7 @@ module.exports.dislikeCard = (req, res) => {
     .then((likes) => res.send({ data: likes }))
     .catch((err) => {
       if (err.name === 'DocumentNotFoundError') {
-        res.status(404).send({ message: err.message });
+        res.status(404).send({ message: `Kарточка с идентификатором ${req.params.id} не найдена` });
         return;
       }
       res.status(500).send({ message: 'На сервере произошла ошибка' });

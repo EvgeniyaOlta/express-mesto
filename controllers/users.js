@@ -12,7 +12,7 @@ module.exports.getUser = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'DocumentNotFoundError') {
-        res.status(404).send({ message: err.message });
+        res.status(404).send({ message: `Пользователь с идентификатором ${req.params.id} не найден` });
         return;
       }
       res.status(500).send({ message: 'На сервере произошла ошибка' });
@@ -26,7 +26,7 @@ module.exports.createUser = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: err.message });
+        res.status(400).send({ message: `Запрос некорректен: ${err.message}` });
         return;
       }
       res.status(500).send({ message: 'На сервере произошла ошибка' });
@@ -46,11 +46,11 @@ module.exports.updateUser = (req, res) => {
     .then((updatedUser) => res.send({ data: updatedUser }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: err.message });
+        res.status(400).send({ message: `Запрос некорректен: ${err.message}` });
         return;
       }
       if (err.name === 'DocumentNotFoundError') {
-        res.status(404).send({ message: err.message });
+        res.status(404).send({ message: `Пользователь с идентификатором ${req.params.id} не найден` });
         return;
       }
       res.status(500).send({ message: 'На сервере произошла ошибка' });
@@ -70,11 +70,11 @@ module.exports.updateAvatar = (req, res) => {
     .then((updatedAvatar) => res.send({ data: updatedAvatar }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: err.message });
+        res.status(400).send({ message: `Запрос некорректен: ${err.message}` });
         return;
       }
       if (err.name === 'DocumentNotFoundError') {
-        res.status(404).send({ message: err.message });
+        res.status(404).send({ message: `Пользователь с идентификатором ${req.params.id} не найден` });
         return;
       }
       res.status(500).send({ message: 'На сервере произошла ошибка' });
